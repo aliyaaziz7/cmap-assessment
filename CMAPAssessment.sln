@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimesheetApp", "TimesheetAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimesheetApp.Tests", "TimesheetApp.Tests\TimesheetApp.Tests.csproj", "{7EA1344F-5C91-47EB-BF4E-609A3ECA1D74}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timesheet.Models", "Timesheet.Models\Timesheet.Models.csproj", "{3800347F-8AD4-47A5-9C72-254129AB9A24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{7EA1344F-5C91-47EB-BF4E-609A3ECA1D74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7EA1344F-5C91-47EB-BF4E-609A3ECA1D74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7EA1344F-5C91-47EB-BF4E-609A3ECA1D74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3800347F-8AD4-47A5-9C72-254129AB9A24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3800347F-8AD4-47A5-9C72-254129AB9A24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3800347F-8AD4-47A5-9C72-254129AB9A24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3800347F-8AD4-47A5-9C72-254129AB9A24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
