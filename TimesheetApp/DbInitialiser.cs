@@ -25,7 +25,13 @@ public class DbInitialiser
             Date = DateTime.Now
         };
 
+        var timesheet2 = new Timesheet.Models.Timesheet() {
+            Username = "kate123",
+            Date = DateTime.Now
+        };
+
         context.Timesheets.Add(timesheet);
+        context.Timesheets.Add(timesheet2);
 
         timesheet.TimesheetRows.Add(new TimesheetRow() {
             ProjectName = "Icarus",
@@ -37,6 +43,18 @@ public class DbInitialiser
             ProjectName = "Jupiter",
             Description = "New Feature",
             HoursWorked = 3
+        });
+
+        timesheet.TimesheetRows.Add(new TimesheetRow() {
+            ProjectName = "Mars",
+            Description = "New Feature",
+            HoursWorked = 2
+        });
+
+        timesheet2.TimesheetRows.Add(new TimesheetRow() {
+            ProjectName = "Mars",
+            Description = "New Feature",
+            HoursWorked = 7
         });
 
         context.SaveChanges();

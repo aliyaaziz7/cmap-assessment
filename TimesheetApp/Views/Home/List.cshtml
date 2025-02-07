@@ -1,0 +1,36 @@
+﻿@using Timesheet.Models
+@model List<TimesheetApp.Models.TimesheetModel>
+
+@{
+    ViewData["Title"] = "Timesheet List";
+}
+
+<div class="text-center">
+    <h2 class="mb-3">Timesheet List</h2>
+    <table class="table table-bordered table-condensed">
+        <tbody>
+            @foreach (var timesheet in Model)
+            {
+                <tr>
+                    <td>@timesheet.Username</td>
+                    <td>@timesheet.Date.ToString("dd/MM/yyyy")</td>
+                    <td>@timesheet.Project</td>
+                    <td>@timesheet.Description</td>
+                    <td>@timesheet.HoursWorked</td>
+                    <td>@timesheet.TotalHoursWorked</td>
+                </tr>
+            }
+        </tbody>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Date</th>
+                <th>Project</th>
+                <th>Description</th>
+                <th>Hours Worked</th>
+                <th>Total Hours Worked</th>
+            </tr>
+        </thead>
+    </table>
+    <a class="ml-4" href="#">Download Timesheet CSV</a>
+</div>
