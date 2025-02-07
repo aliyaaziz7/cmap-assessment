@@ -1,0 +1,44 @@
+using Microsoft.EntityFrameworkCore;
+using Timesheet.Models;
+
+public class DbInitialiser
+{
+    public static void InitDb(WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<TimesheetContext>()
+        ?? throw new InvalidOperationException("Failed to retrieve timesheet context");
+
+        SeedData(context);
+    }
+
+    private static void SeedData(TimesheetContext context)
+    {
+        context.Database.Migrate();
+
+        if(context.Timesheets.Any()) {
+            return;
+        }
+
+        var timesheet = new Timesheet.Models.Timesheet() {
+            Username = "aliyaaziz",
+            Date = DateTime.Now
+        };
+
+        context.Timesheets.Add(timesheet);
+
+        timesheet.TimesheetRows.Add(new TimesheetRow() {
+            ProjectName = "Icarus",
+            Description = "Debugging",
+            HoursWorked = 4
+        });
+
+        timesheet.TimesheetRows.Add(new TimesheetRow() {
+            ProjectName = "Jupiter",
+            Description = "New Feature",
+            HoursWorked = 3
+        });
+
+        context.SaveChanges();
+    }
+}

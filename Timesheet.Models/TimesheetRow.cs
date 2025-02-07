@@ -8,5 +8,5 @@ public class TimesheetRow
     public required string Description { get; set; }
     public int HoursWorked { get; set; }
 
-    public virtual required Timesheet Timesheet { get; set; }
+    public Timesheet Timesheet { get; set; } = null!;
 }

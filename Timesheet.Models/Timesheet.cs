@@ -7,5 +7,5 @@ public class Timesheet
     public DateTime Date { get; set; }
     public int TotalHours => TimesheetRows != null ? TimesheetRows.Sum(x => x.HoursWorked) : 0;
 
-    public virtual ICollection<TimesheetRow>? TimesheetRows { get; set; }
+    public ICollection<TimesheetRow> TimesheetRows = [];
 }
