@@ -1,7 +1,8 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Timesheet.Models;
+using TimesheetApp.Interfaces;
 using TimesheetApp.Models;
 
 namespace TimesheetApp.Controllers;
@@ -9,34 +10,59 @@ namespace TimesheetApp.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly TimesheetContext _context;
+    private readonly ITimesheetRepository _timesheetRepository;
 
-    public HomeController(ILogger<HomeController> logger, TimesheetContext context)
+    public HomeController(ILogger<HomeController> logger, ITimesheetRepository timesheetRepository)
     {
         _logger = logger;
-        _context = context;
+        _timesheetRepository = timesheetRepository;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> IndexAsync()
     {
-        var viewModel = _context.TimesheetRows
-                .Include(x => x.Timesheet)
-                .ThenInclude(x => x.TimesheetRows)
-                .Select(x => new TimesheetModel() {
-            Username = x.Timesheet.Username,
-            Project = x.ProjectName,
-            Description = x.Description,
-            HoursWorked = x.HoursWorked,
-            TotalHoursWorked = x.Timesheet.TotalHours,
-            Date = x.Timesheet.Date
-        }).ToList();
-            
+        var viewModel = (await _timesheetRepository.ListAsync())
+                .Select(x => new TimesheetModel()
+                {
+                    Username = x.Timesheet.Username,
+                    Project = x.ProjectName,
+                    Description = x.Description,
+                    HoursWorked = x.HoursWorked,
+                    TotalHoursWorked = x.Timesheet.TotalHours,
+                    Date = x.Timesheet.Date
+                }).ToList();
+
         return View("List", viewModel);
     }
 
     public IActionResult Create()
     {
         return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<ActionResult> CreateTimesheet(TimesheetCreateModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View("Create", model);
+        }
+
+        await AddNewTimesheet(model);
+        
+        return RedirectToAction("Index", "Home");
+    }
+
+    public async Task AddNewTimesheet(TimesheetCreateModel model) {
+        await _timesheetRepository.AddAsync(new Timesheet.Models.Timesheet() {
+            Username = model.Username,
+            Date = DateTime.Now,
+            TimesheetRows = [new TimesheetRow() {
+                ProjectName = model.Project,
+                Description = model.Description,
+                HoursWorked = model.HoursWorked
+            }]
+        });
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -14,20 +14,18 @@ public class DbInitialiser
 
     private static void SeedData(TimesheetContext context)
     {
-        context.Database.Migrate();
-
         if(context.Timesheets.Any()) {
             return;
         }
 
         var timesheet = new Timesheet.Models.Timesheet() {
             Username = "aliyaaziz",
-            Date = DateTime.Now
+            Date = DateTime.Today
         };
 
         var timesheet2 = new Timesheet.Models.Timesheet() {
             Username = "kate123",
-            Date = DateTime.Now
+            Date = DateTime.Today
         };
 
         context.Timesheets.Add(timesheet);
