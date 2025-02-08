@@ -56,7 +56,7 @@ public class HomeController : Controller
     public async Task AddNewTimesheet(TimesheetCreateModel model) {
         await _timesheetRepository.AddAsync(new Timesheet.Models.Timesheet() {
             Username = model.Username,
-            Date = DateTime.Now,
+            Date = model.Date,
             TimesheetRows = [new TimesheetRow() {
                 ProjectName = model.Project,
                 Description = model.Description,
