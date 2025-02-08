@@ -39,6 +39,54 @@ public class HomeControllerTests
         Assert.That(results.First().TotalHoursWorked, Is.EqualTo(9));
     }
 
+    [Test]
+    public async Task CreatePost_ReturnsAViewResult_WhenModelStateIsInvalid()
+    {
+        //Arrange
+        _timesheetRepoMock.Setup(repo => repo.ListAsync())
+            .ReturnsAsync(GetTestTimesheets());
+        var controller = new HomeController(_logger, _timesheetRepoMock.Object);
+        controller.ModelState.AddModelError("SessionName", "Required");
+        var newSession = new TimesheetCreateModel(){
+            Username = "",
+            Date = DateTime.Today,
+            Project = "",
+            Description = "",
+            HoursWorked = 0
+        };
+
+        // Act
+        var result = await controller.CreateTimesheet(newSession);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<ViewResult>());
+        Assert.That(((ViewResult)result).ViewData.Model, Is.InstanceOf<TimesheetCreateModel>());
+    }
+
+    [Test]
+    public async Task CreatePost_ReturnsARedirect_WhenModelStateIsValid()
+    {
+        //Arrange
+        _timesheetRepoMock.Setup(repo => repo.ListAsync())
+            .ReturnsAsync(GetTestTimesheets());
+        var controller = new HomeController(_logger, _timesheetRepoMock.Object);
+        var newSession = new TimesheetCreateModel(){
+            Username = "a",
+            Date = DateTime.Today,
+            Project = "a",
+            Description = "a",
+            HoursWorked = 1
+        };
+
+        // Act
+        var result = await controller.CreateTimesheet(newSession);
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<RedirectToActionResult>());
+        Assert.That(((RedirectToActionResult)result).ActionName, Is.EqualTo("Index"));
+        Assert.That(((RedirectToActionResult)result).ControllerName, Is.EqualTo("Home"));
+    }
+
     private ICollection<TimesheetRow> GetTestTimesheets()
     {
         var timesheetRows = new List<TimesheetRow>

@@ -16,30 +16,35 @@
             @Html.TextBoxFor(x => x.Date, new {style="width: 250px", type = "date", @class = "form-control" })         
             <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
         </div>
+        <span class="text-danger" asp-validation-for="Date"></span><br />
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Username, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
             @Html.TextBoxFor(m => m.Username, new { @class = "form-control" })
         </div>
+        <span class="text-danger" asp-validation-for="Username"></span><br />
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Project, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
             @Html.TextBoxFor(m => m.Project, new { @class = "form-control" })
         </div>
+        <span class="text-danger" asp-validation-for="Project"></span><br />
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
             @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
         </div>
+        <span class="text-danger" asp-validation-for="Description"></span><br />
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.HoursWorked, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
             @Html.TextBoxFor(m => m.HoursWorked, new {style="width: 250px", type = "number", @class = "form-control" })
         </div>
+        <span class="text-danger" asp-validation-for="HoursWorked"></span><br />
     </div>
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
