@@ -65,10 +65,25 @@ public class HomeController : Controller
         });
     }
 
-    public FileContentResult ExportCsv()
+    public async Task<FileResult> ExportCsvAsync()
     {
-        string csv = "";
-        return File(new System.Text.UTF8Encoding().GetBytes(csv), "text/csv", "timesheet.csv");
+        var timesheetData = (await _timesheetRepository.ListAsync())
+                .Select(x => new TimesheetModel()
+                {
+                    Username = x.Timesheet.Username,
+                    Project = x.ProjectName,
+                    Description = x.Description,
+                    HoursWorked = x.HoursWorked,
+                    TotalHoursWorked = x.Timesheet.TotalHours,
+                    Date = x.Timesheet.Date
+                });
+
+        return File(timesheetData, "timesheet.csv");
+    }
+
+    public virtual TimesheetCsvResult File(IEnumerable<TimesheetModel> timesheetData, string fileDownloadName)
+    {
+        return new TimesheetCsvResult(timesheetData, fileDownloadName);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

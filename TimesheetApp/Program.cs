@@ -2,6 +2,7 @@ using Timesheet.Models;
 using Microsoft.EntityFrameworkCore;
 using TimesheetApp.Interfaces;
 using TimesheetApp;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,18 @@ builder.Services.AddDbContext<TimesheetContext>(opt =>
 });
 
 builder.Services.AddScoped<ITimesheetRepository, TimesheetRepository>();
+
+// If using Kestrel:
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.AllowSynchronousIO = true;
+});
+
+// If using IIS:
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.AllowSynchronousIO = true;
+});
 
 var app = builder.Build();
 

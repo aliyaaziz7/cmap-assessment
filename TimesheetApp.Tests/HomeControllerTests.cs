@@ -88,7 +88,7 @@ public class HomeControllerTests
     }
 
     [Test]
-    public void ExportCsv_ReturnsACsv()
+    public async Task ExportCsv_ReturnsACsv()
     {
         //Arrange
         _timesheetRepoMock.Setup(repo => repo.ListAsync())
@@ -96,7 +96,7 @@ public class HomeControllerTests
         var controller = new HomeController(_logger, _timesheetRepoMock.Object);
         
         // Act
-        var result = controller.ExportCsv();
+        var result = await controller.ExportCsvAsync();
 
         // Assert
         Assert.That(result, Is.InstanceOf<TimesheetCsvResult>());

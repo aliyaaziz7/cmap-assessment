@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using TimesheetApp.Models;
+
+namespace TimesheetApp.Models;
 
 public class TimesheetCsvResult : FileResult
 {
@@ -19,7 +20,7 @@ public class TimesheetCsvResult : FileResult
         using var streamWriter = new StreamWriter(response.Body);
         
         await streamWriter.WriteLineAsync(
-          $"User Name, Date, Project, Description, of tasks, Hours Worked, Total Hours for the Day"
+          $"User Name, Date, Project, Description of tasks, Hours Worked, Total Hours for the Day"
         );
 
         foreach (var p in _timesheetData)

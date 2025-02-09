@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Timesheet.Models;
 
 public class DbInitialiser
