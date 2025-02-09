@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace TimesheetApp.Models;
 
 public class TimesheetCreateModel
@@ -6,5 +8,6 @@ public class TimesheetCreateModel
     public DateTime Date {get; set; }
     public required string Project { get; set; }
     public required string Description { get; set; }
+    [DisplayName("Hours Worked")]
     public int HoursWorked { get; set; }
 }
