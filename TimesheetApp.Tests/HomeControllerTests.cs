@@ -5,6 +5,7 @@ using TimesheetApp.Interfaces;
 using Timesheet.Models;
 using TimesheetApp.Models;
 using Moq;
+using Microsoft.AspNetCore.Http;
 
 namespace TimesheetApp.Tests;
 
@@ -12,12 +13,19 @@ public class HomeControllerTests
 {
     private ILogger<HomeController> _logger;
     private Mock<ITimesheetRepository> _timesheetRepoMock;
+    private DefaultHttpContext _httpContext;
+    private ActionContext _fakeActionContext;
 
     [SetUp]
     public void Setup()
     {
         _timesheetRepoMock = new Mock<ITimesheetRepository>();
         _logger = new Mock<ILogger<HomeController>>().Object;
+        _httpContext = new DefaultHttpContext();
+        _fakeActionContext = new ActionContext()
+        {
+            HttpContext = _httpContext
+        };
     }
 
     [Test]
@@ -102,6 +110,30 @@ public class HomeControllerTests
         Assert.That(result, Is.InstanceOf<TimesheetCsvResult>());
         Assert.That(result.FileDownloadName, Is.EqualTo("timesheet.csv"));
         Assert.That(result.ContentType, Is.EqualTo("text/csv"));
+    }
+
+    [Test]
+    public async Task TimesheetCsvResult_ReturnsExpectedCsvFormat()
+    {
+        //Arrange
+        var data = new List<TimesheetModel>()
+            {
+                new() { Username = "aliyaaziz", Date = DateTime.Parse("09/02/2025"), Project = "Icarus", Description = "Debugging", HoursWorked = 4, TotalHoursWorked = 9 },
+                new() { Username = "aliyaaziz", Date = DateTime.Parse("09/02/2025"), Project = "Jupiter", Description = "New Feature", HoursWorked = 3, TotalHoursWorked = 9 },
+                new() { Username = "aliyaaziz", Date = DateTime.Parse("09/02/2025"), Project = "Mars", Description = "New Feature", HoursWorked = 2, TotalHoursWorked = 9 },
+                new() { Username = "kate123", Date = DateTime.Parse("09/02/2025"), Project = "Mars", Description = "New Feature", HoursWorked = 7, TotalHoursWorked = 7 },
+            }.AsQueryable();
+        var _expectedResponseText = File.ReadAllText(TestContext.CurrentContext.TestDirectory + @"/TestData/expectedCsv.txt");
+        var _timesheetCsvResult = new TimesheetCsvResult(data, "timesheet.csv");
+        var memoryStream = new MemoryStream();
+        _httpContext.Response.Body = memoryStream;
+
+        //Act
+        await _timesheetCsvResult.ExecuteResultAsync(_fakeActionContext);
+        var streamText = System.Text.Encoding.Default.GetString(memoryStream.ToArray());
+
+        // Assert
+        Assert.That(streamText, Is.EqualTo(_expectedResponseText));
     }
 
     private ICollection<TimesheetRow> GetTestTimesheets()
