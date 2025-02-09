@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using System.Threading.Tasks;
+using Humanizer.Bytes;
 using Microsoft.AspNetCore.Mvc;
 using Timesheet.Models;
 using TimesheetApp.Interfaces;
@@ -63,6 +63,12 @@ public class HomeController : Controller
                 HoursWorked = model.HoursWorked
             }]
         });
+    }
+
+    public FileContentResult ExportCsv()
+    {
+        string csv = "";
+        return File(new System.Text.UTF8Encoding().GetBytes(csv), "text/csv", "timesheet.csv");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

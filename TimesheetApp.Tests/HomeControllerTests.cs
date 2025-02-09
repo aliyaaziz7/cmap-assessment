@@ -87,6 +87,23 @@ public class HomeControllerTests
         Assert.That(((RedirectToActionResult)result).ControllerName, Is.EqualTo("Home"));
     }
 
+    [Test]
+    public void ExportCsv_ReturnsACsv()
+    {
+        //Arrange
+        _timesheetRepoMock.Setup(repo => repo.ListAsync())
+            .ReturnsAsync(GetTestTimesheets());
+        var controller = new HomeController(_logger, _timesheetRepoMock.Object);
+        
+        // Act
+        var result = controller.ExportCsv();
+
+        // Assert
+        Assert.That(result, Is.InstanceOf<TimesheetCsvResult>());
+        Assert.That(result.FileDownloadName, Is.EqualTo("timesheet.csv"));
+        Assert.That(result.ContentType, Is.EqualTo("text/csv"));
+    }
+
     private ICollection<TimesheetRow> GetTestTimesheets()
     {
         var timesheetRows = new List<TimesheetRow>

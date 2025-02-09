@@ -7,6 +7,10 @@
 
 <div class="text-center">
     <h2 class="mb-3">Timesheet List</h2>
+    <p>
+        <a type="button" class="btn btn-outline-primary" asp-action="Create">Create New</a>
+        <a type="button" class="btn btn-outline-primary" asp-controller="Home" asp-action="ExportCsv">Export to CSV</a>
+    </p>
     <table class="table table-bordered table-condensed">
         <tbody>
             @foreach (var timesheet in Model)
@@ -32,5 +36,4 @@
             </tr>
         </thead>
     </table>
-    <a class="ml-4" href="#">Download Timesheet CSV</a>
 </div>
