@@ -1,4 +1,4 @@
-User Name, Date, Project, Description of tasks, Hours Worked, Total Hours for the Day
+User Name, Date, Project, Description of Tasks, Hours Worked, Total Hours for the Day
 aliyaaziz, 09/02/2025 00:00:00, Icarus, Debugging, 4, 9
 aliyaaziz, 09/02/2025 00:00:00, Jupiter, New Feature, 3, 9
 aliyaaziz, 09/02/2025 00:00:00, Mars, New Feature, 2, 9
