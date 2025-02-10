@@ -6,11 +6,14 @@ using Timesheet.Models;
 using TimesheetApp.Models;
 using Moq;
 using Microsoft.AspNetCore.Http;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace TimesheetApp.Tests;
 
 public class HomeControllerTests
 {
+    private IValidator<TimesheetCreateModel> _validator;
     private ILogger<HomeController> _logger;
     private Mock<ITimesheetRepository> _timesheetRepoMock;
     private DefaultHttpContext _httpContext;
@@ -21,6 +24,11 @@ public class HomeControllerTests
     {
         _timesheetRepoMock = new Mock<ITimesheetRepository>();
         _logger = new Mock<ILogger<HomeController>>().Object;
+        var validatorMock = new Mock<IValidator<TimesheetCreateModel>>();
+        validatorMock
+            .Setup(repo => repo.ValidateAsync(It.IsAny<TimesheetCreateModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult(){ Errors = [], RuleSetsExecuted = []});
+        _validator = validatorMock.Object;
         _httpContext = new DefaultHttpContext();
         _fakeActionContext = new ActionContext()
         {
@@ -34,7 +42,7 @@ public class HomeControllerTests
         //Arrange
         _timesheetRepoMock.Setup(repo => repo.ListAsync())
             .ReturnsAsync(GetTestTimesheets());
-        var controller = new HomeController(_logger, _timesheetRepoMock.Object);
+        var controller = new HomeController(_logger, _timesheetRepoMock.Object, _validator);
 
         // Act
         var result = await controller.IndexAsync();
@@ -53,18 +61,17 @@ public class HomeControllerTests
         //Arrange
         _timesheetRepoMock.Setup(repo => repo.ListAsync())
             .ReturnsAsync(GetTestTimesheets());
-        var controller = new HomeController(_logger, _timesheetRepoMock.Object);
-        controller.ModelState.AddModelError("SessionName", "Required");
-        var newSession = new TimesheetCreateModel(){
-            Username = "",
-            Date = DateTime.Today,
-            Project = "",
-            Description = "",
-            HoursWorked = 0
-        };
+        var validatorMock = new Mock<IValidator<TimesheetCreateModel>>();
+        validatorMock
+            .Setup(repo => repo.ValidateAsync(It.IsAny<TimesheetCreateModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult(){ 
+                Errors = [new ValidationFailure(){ ErrorMessage = "Validation Error", PropertyName = "Username" }], 
+                RuleSetsExecuted = []});  
+        _validator = validatorMock.Object;
+        var controller = new HomeController(_logger, _timesheetRepoMock.Object, _validator);
 
         // Act
-        var result = await controller.CreateTimesheet(newSession);
+        var result = await controller.CreateTimesheet(GetTestTimesheetModel());
 
         // Assert
         Assert.That(result, Is.InstanceOf<ViewResult>());
@@ -77,17 +84,10 @@ public class HomeControllerTests
         //Arrange
         _timesheetRepoMock.Setup(repo => repo.ListAsync())
             .ReturnsAsync(GetTestTimesheets());
-        var controller = new HomeController(_logger, _timesheetRepoMock.Object);
-        var newSession = new TimesheetCreateModel(){
-            Username = "a",
-            Date = DateTime.Today,
-            Project = "a",
-            Description = "a",
-            HoursWorked = 1
-        };
-
+        var controller = new HomeController(_logger, _timesheetRepoMock.Object, _validator);
+        
         // Act
-        var result = await controller.CreateTimesheet(newSession);
+        var result = await controller.CreateTimesheet(GetTestTimesheetModel());
 
         // Assert
         Assert.That(result, Is.InstanceOf<RedirectToActionResult>());
@@ -101,7 +101,7 @@ public class HomeControllerTests
         //Arrange
         _timesheetRepoMock.Setup(repo => repo.ListAsync())
             .ReturnsAsync(GetTestTimesheets());
-        var controller = new HomeController(_logger, _timesheetRepoMock.Object);
+        var controller = new HomeController(_logger, _timesheetRepoMock.Object, _validator);
         
         // Act
         var result = await controller.ExportCsvAsync();
@@ -136,7 +136,7 @@ public class HomeControllerTests
         Assert.That(streamText, Is.EqualTo(_expectedResponseText));
     }
 
-    private ICollection<TimesheetRow> GetTestTimesheets()
+    private static ICollection<TimesheetRow> GetTestTimesheets()
     {
         var timesheetRows = new List<TimesheetRow>
         {
@@ -161,7 +161,7 @@ public class HomeControllerTests
                     }]
                 }
             },
-            new TimesheetRow()
+            new()
             {
                 ProjectName = "Pluto",
                 Description = "Bug Fix",
@@ -185,5 +185,16 @@ public class HomeControllerTests
         };
        
         return timesheetRows;
+    }
+
+    private static TimesheetCreateModel GetTestTimesheetModel()
+    {
+        return new TimesheetCreateModel(){
+            Username = "a",
+            Date = DateTime.Today,
+            Project = "a",
+            Description = "a",
+            HoursWorked = 1
+        };
     }
 }

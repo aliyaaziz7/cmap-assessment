@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using TimesheetApp.Interfaces;
 using TimesheetApp;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using TimesheetApp.Validators;
+using FluentValidation;
+using TimesheetApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +17,7 @@ builder.Services.AddDbContext<TimesheetContext>(opt =>
     opt.UseInMemoryDatabase("InMemoryDb");
 });
 
+builder.Services.AddScoped<IValidator<TimesheetCreateModel>, TimesheetCreateModelValidator>();
 builder.Services.AddScoped<ITimesheetRepository, TimesheetRepository>();
 
 // If using Kestrel:

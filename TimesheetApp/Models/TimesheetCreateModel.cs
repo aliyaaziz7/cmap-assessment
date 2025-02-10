@@ -1,7 +1,11 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using TimesheetApp.Validators;
+using FluentValidation.Attributes;
 
 namespace TimesheetApp.Models;
 
+[Validator(typeof(TimesheetCreateModelValidator))]
 public class TimesheetCreateModel
 {
     public required string Username { get; set; }

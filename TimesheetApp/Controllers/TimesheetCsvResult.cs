@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using TimesheetApp.Models;
 
-namespace TimesheetApp.Models;
+namespace TimesheetApp.Controllers;
 
 public class TimesheetCsvResult : FileResult
 {

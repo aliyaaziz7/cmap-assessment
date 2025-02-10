@@ -1,5 +1,7 @@
 using System.Diagnostics;
-using Humanizer.Bytes;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Timesheet.Models;
 using TimesheetApp.Interfaces;
@@ -10,11 +12,13 @@ namespace TimesheetApp.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IValidator<TimesheetCreateModel> _validator;
     private readonly ITimesheetRepository _timesheetRepository;
 
-    public HomeController(ILogger<HomeController> logger, ITimesheetRepository timesheetRepository)
+    public HomeController(ILogger<HomeController> logger, ITimesheetRepository timesheetRepository, IValidator<TimesheetCreateModel> validator)
     {
         _logger = logger;
+        _validator = validator;
         _timesheetRepository = timesheetRepository;
     }
 
@@ -43,8 +47,10 @@ public class HomeController : Controller
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> CreateTimesheet(TimesheetCreateModel model)
     {
-        if (!ModelState.IsValid)
+        ValidationResult result = await _validator.ValidateAsync(model);
+        if (!result.IsValid)
         {
+            result.AddToModelState(ModelState);
             return View("Create", model);
         }
 
