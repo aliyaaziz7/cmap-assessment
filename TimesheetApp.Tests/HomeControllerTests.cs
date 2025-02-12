@@ -8,6 +8,7 @@ using Moq;
 using Microsoft.AspNetCore.Http;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace TimesheetApp.Tests;
 
@@ -43,7 +44,7 @@ public class HomeControllerTests
         _timesheetRepoMock.Setup(repo => repo.ListAsync())
             .ReturnsAsync(GetTestTimesheets());
         var controller = new HomeController(_logger, _timesheetRepoMock.Object, _validator);
-
+        
         // Act
         var result = await controller.IndexAsync();
 
@@ -69,7 +70,9 @@ public class HomeControllerTests
                 RuleSetsExecuted = []});  
         _validator = validatorMock.Object;
         var controller = new HomeController(_logger, _timesheetRepoMock.Object, _validator);
-
+        var tempData = new TempDataDictionary(_httpContext, Mock.Of<ITempDataProvider>());
+        controller.TempData = tempData;
+        
         // Act
         var result = await controller.CreateTimesheet(GetTestTimesheetModel());
 
@@ -85,6 +88,8 @@ public class HomeControllerTests
         _timesheetRepoMock.Setup(repo => repo.ListAsync())
             .ReturnsAsync(GetTestTimesheets());
         var controller = new HomeController(_logger, _timesheetRepoMock.Object, _validator);
+        var tempData = new TempDataDictionary(_httpContext, Mock.Of<ITempDataProvider>());
+        controller.TempData = tempData;
         
         // Act
         var result = await controller.CreateTimesheet(GetTestTimesheetModel());
