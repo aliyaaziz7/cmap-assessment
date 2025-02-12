@@ -50,11 +50,15 @@ public class HomeController : Controller
         ValidationResult result = await _validator.ValidateAsync(model);
         if (!result.IsValid)
         {
+            TempData["Message"] = "Please correct errors on page";
+
             result.AddToModelState(ModelState);
             return View("Create", model);
         }
 
         await AddNewTimesheet(model);
+
+        TempData["Message"] = "Timesheet added!";
         
         return RedirectToAction("Index", "Home");
     }

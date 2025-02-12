@@ -11,6 +11,11 @@
         <a type="button" class="btn btn-outline-primary" asp-action="Create">Create New</a>
         <a type="button" class="btn btn-outline-primary" asp-controller="Home" asp-action="ExportCsv">Export to CSV</a>
     </p>
+    @if (@TempData["Message"] != null) {
+        <div class="alert alert-success" role="alert">
+            @TempData["Message"]
+        </div>
+    }
     <table class="table table-bordered table-condensed">
         <tbody>
             @foreach (var timesheet in Model)

@@ -8,6 +8,11 @@
 <p>Add a new Timesheet record here</p>
 
 <div class="row">
+    @if (@TempData["Message"] != null) {
+        <div class="alert alert-danger" role="alert">
+            @TempData["Message"]
+        </div>
+    }
     <div class="col-md-4">
         @using (Html.BeginForm("CreateTimesheet", "Home", FormMethod.Post, new
         {
